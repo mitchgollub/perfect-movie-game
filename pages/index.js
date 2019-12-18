@@ -9,8 +9,7 @@ export default class Home extends Component {
       movie1: '',
       movie2: '',
       movie1Score: '__',
-      movie2Score: '__',
-      movie2Ready: false
+      movie2Score: '__'
     }
 
     this.movie1OnChange = this.movie1OnChange.bind(this);
@@ -47,13 +46,13 @@ export default class Home extends Component {
       update = { movie2Score: score + '%' };
     }
 
-    update.movie2Ready = true;
-
     this.setState(update)
   }
 
   calculateScore() {
-    return Number(this.state.movie1Score.replace(/\D/g,'')) + Number(this.state.movie2Score.replace(/\D/g,'')) + '%';
+    return Number(this.state.movie1Score.replace(/\D/g, ''))
+      + Number(this.state.movie2Score.replace(/\D/g, ''))
+      + '%';
   }
 
   render() {
@@ -71,11 +70,17 @@ export default class Home extends Component {
             Enter the name of a movie to get started!
           </p>
 
-          <div className="row">
-            <h2>Movie 1: </h2><input type="text" name="movie1" disabled={this.state.movie2Ready} onChange={this.movie1OnChange} value={this.state.movie1} />
-            <button id="movie1Submit" onClick={this.handleMovieEntry} disabled={this.state.movie2Ready}>Submit</button>
-            <h2>Movie 2: </h2><input type="text" name="movie2" disabled={!this.state.movie2Ready} onChange={this.movie2OnChange} value={this.state.movie2} />
-            <button id="movie2Submit" onClick={this.handleMovieEntry} disabled={!this.state.movie2Ready}>Submit</button>
+          <div className="movie-inputs">
+            <h2>Movie 1: </h2>
+            <div className="movie-input">
+              <input className="movie-input__child" type="text" name="movie1" onChange={this.movie1OnChange} value={this.state.movie1} />
+              <button className="movie-input__child" id="movie1Submit" onClick={this.handleMovieEntry}>Submit</button>
+            </div>
+            <h2>Movie 2: </h2>
+            <div className="movie-input">
+              <input className="movie-input__child" type="text" name="movie2" onChange={this.movie2OnChange} value={this.state.movie2} />
+              <button className="movie-input__child" id="movie2Submit" onClick={this.handleMovieEntry}>Submit</button>
+            </div>
           </div>
 
           <div className="row">
@@ -101,10 +106,26 @@ export default class Home extends Component {
       }
       .row {
         max-width: 880px;
-        margin: 80px auto 40px;
+        margin: 1em auto;
         display: flex;
         flex-direction: row;
         justify-content: space-around;
+      }
+      .movie-inputs {
+        max-width: 880px;
+        margin: 1em auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+      }
+      .movie-input {
+        display: flex;
+        flex-direction: column;
+        flex: auto;
+      }
+      .movie-input__child {
+        flex:auto;
+        margin: 1em;
       }
     `}</style>
       </div>
