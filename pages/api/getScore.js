@@ -20,9 +20,9 @@ export default async (req, res) => {
         console.log(score);
 
         return res.status(200).json({ score: score });
-
     }
     catch (error) {
-        return res.status(500).json({ error: error });
+        console.error(error);
+        return res.status(500).json({ error: 'Error finding Movie' });
     }
 }

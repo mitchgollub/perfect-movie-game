@@ -25,7 +25,7 @@ export default class Home extends Component {
 
     let submit = this.state.movie2;
 
-    if (!this.state.movie2)
+    if ((id === 'movie1Submit'))
       submit = this.state.movie1;
 
     const res = await fetch(`/api/getScore`, {
@@ -38,12 +38,21 @@ export default class Home extends Component {
         movie: submit
       })
     });
-    const score = (await res.json()).score;
 
-    let update = { movie1Score: score + '%' };
+    const json = await res.json();
+    let result = '';
+
+    if (json.error) {
+      result = 'Score Not Found';
+    }
+    else {
+      result = json.score + '%';
+    }
+
+    let update = { movie1Score: result };
 
     if (!(id === 'movie1Submit')) {
-      update = { movie2Score: score + '%' };
+      update = { movie2Score: result };
     }
 
     this.setState(update)
