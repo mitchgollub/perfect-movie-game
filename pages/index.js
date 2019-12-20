@@ -16,16 +16,16 @@ export default class Home extends Component {
     this.handleMovieEntry = this.handleMovieEntry.bind(this);
   }
 
-  movie1OnChange(event) { this.setState({ movie1: { name: event.target.value, score: this.state.movie1.score } }) }
-  movie2OnChange(event) { this.setState({ movie2: { name: event.target.value, score: this.state.movie2.score } }) }
+  movie1OnChange(event) { this.state.movie1.name = event.target.value; this.setState({ movie1: this.state.movie1 }) }
+  movie2OnChange(event) { this.state.movie2.name = event.target.value; this.setState({ movie2: this.state.movie2 }) }
 
   async handleMovieEntry(event) {
     const id = event.target.id;
 
-    let submit = this.state.movie2.name;
+    let movieName = this.state.movie2.name;
 
     if ((id === 'movie1Submit'))
-      submit = this.state.movie1.name;
+      movieName = this.state.movie1.name;
 
     const res = await fetch(`/api/getScore`, {
       method: 'POST',
@@ -34,25 +34,24 @@ export default class Home extends Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        movie: submit
+        movieName: movieName
       })
     });
 
     const json = await res.json();
-    const movie = new Movie(json.movie, json.score, json.poster);
-    let result = '';
-
-    if (json.error) {
-      result = 'Score Not Found';
+    const movie = new Movie(json.name, json.score, json.poster);
+    
+    if (json.error || !json.score) {
+      movie.score = 'Score Not Found';
     }
     else {
-      result = movie.score + '%';
+      movie.score += '%';
     }
 
-    let update = { movie1: { score: result, poster: movie.poster } };
+    let update = { movie1: movie };
 
     if (!(id === 'movie1Submit')) {
-      update = { movie2: { score: result, poster: movie.poster } };
+      update = { movie2: movie };
     }
 
     this.setState(update)
@@ -68,7 +67,7 @@ export default class Home extends Component {
     return (
       <div>
         <Head>
-          <title>Home</title>
+          <title>Perfect Movie Game</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 

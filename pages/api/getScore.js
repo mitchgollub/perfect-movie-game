@@ -5,7 +5,7 @@ import { Movie } from '../../models/movie';
 
 export default async (req, res) => {
     try {
-        const movieName = req.body.movie;
+        const movieName = req.body.movieName;
         console.log(movieName);
 
         if (!movieName)
@@ -25,8 +25,13 @@ export default async (req, res) => {
             const response = await axios.get(`https://www.omdbapi.com/?t=${encodeURI(movieName)}&apikey=${process.env.OMDB_API_KEY}`);
             console.log(response.data);
 
+            //Can't find movie
+            if (response.data.Response) {
+
+            }
+
             // retrieve rotten tomatoes rating
-            movie.score = response.data.Ratings.find((rating) => rating.Source === "Rotten Tomatoes").Value.replace(/\D/g, '');
+            movie.score = getRottenTomatoesRating(response.data.Ratings);
             movie.poster = response.data.Poster;
 
             // Insert value into DB
@@ -41,4 +46,14 @@ export default async (req, res) => {
         console.error(error);
         return res.status(500).json({ error: 'Error finding Movie' });
     }
+}
+
+function getRottenTomatoesRating(ratings) {
+    const rottenTomatoesRating = ratings.find((rating) => rating.Source === "Rotten Tomatoes");
+
+    if (rottenTomatoesRating) {
+        return rottenTomatoesRating.Value.replace(/\D/g, '');
+    }
+
+    return null;
 }
