@@ -1,4 +1,7 @@
 import axios from 'axios';
+import SQL from 'sql-template-strings';
+import db from '../../lib/db';
+import { Movie } from '../../models/movie';
 
 export default async (req, res) => {
     try {
@@ -8,18 +11,31 @@ export default async (req, res) => {
         if (!movieName)
             return res.status(400).json({ error: "'movie' parameter required" });
 
-        // TO-DO: Implement DB cache for input -> score
-        // Call API if response not in cache
+        let movie = new Movie(movieName);
 
-        // Call omdb api w/ movie name
-        const response = await axios.get(`https://www.omdbapi.com/?t=${encodeURI(movieName)}&apikey=${process.env.OMDB_API_KEY}`);
-        console.log(response.data);
+        // Check DB cache to reduce # of API calls
+        const dbResp = await db.query(SQL`SELECT score, poster FROM movies WHERE request = ${movieName}`);
+        console.log(dbResp);
+        if (dbResp[0]) {
+            movie.score = dbResp[0].score;
+            movie.poster = dbResp[0].poster;
+        }
+        else {
+            // Call omdb api w/ movie name
+            const response = await axios.get(`https://www.omdbapi.com/?t=${encodeURI(movieName)}&apikey=${process.env.OMDB_API_KEY}`);
+            console.log(response.data);
 
-        // retrieve rotten tomatoes rating
-        const score = response.data.Ratings.find((rating) => rating.Source === "Rotten Tomatoes").Value.replace(/\D/g, '');
-        console.log(score);
+            // retrieve rotten tomatoes rating
+            movie.score = response.data.Ratings.find((rating) => rating.Source === "Rotten Tomatoes").Value.replace(/\D/g, '');
+            movie.poster = response.data.Poster;
 
-        return res.status(200).json({ score: score });
+            // Insert value into DB
+            const dbUpdate = await db.query(SQL`INSERT INTO movies (request, score, poster) VALUES (${movieName}, ${movie.score}, ${movie.poster})`);
+            console.log(dbUpdate);
+        }
+        console.log(movie);
+
+        return res.status(200).json(movie);
     }
     catch (error) {
         console.error(error);
