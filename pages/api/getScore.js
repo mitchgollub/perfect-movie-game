@@ -25,13 +25,14 @@ export default async (req, res) => {
             const response = await axios.get(`https://www.omdbapi.com/?t=${encodeURI(movieName)}&apikey=${process.env.OMDB_API_KEY}`);
             console.log(response.data);
 
-            //Can't find movie
-            if (response.data.Response) {
-
+            // Can't find movie
+            if (response.data.Error) {
+                console.warn(response.data.Error);
+                return res.status(400).json({ error: `Could not find Movie '${movieName}'` });
             }
 
             // retrieve rotten tomatoes rating
-            movie.score = getRottenTomatoesRating(response.data.Ratings);
+            movie.score = getRating(response.data.Ratings);
             movie.poster = response.data.Poster;
 
             // Insert value into DB
@@ -48,11 +49,22 @@ export default async (req, res) => {
     }
 }
 
-function getRottenTomatoesRating(ratings) {
-    const rottenTomatoesRating = ratings.find((rating) => rating.Source === "Rotten Tomatoes");
+function getRating(ratings) {
+    // Try to get Rotten Tomatoes Rating first
+    // If not present, get IMDB
+    if (ratings) {
+        const rottenTomatoesRating = ratings.find((rating) => rating.Source === "Rotten Tomatoes");
 
-    if (rottenTomatoesRating) {
-        return rottenTomatoesRating.Value.replace(/\D/g, '');
+        if (rottenTomatoesRating) {
+            return rottenTomatoesRating.Value.replace(/\D/g, '');
+        }
+        else {
+            const imdbRating = ratings.find((rating) => rating.Source === "Internet Movie Database");
+
+            if(imdbRating) {
+                return imdbRating.Value.replace(/\/10|\./g, '');
+            }
+        }
     }
 
     return null;

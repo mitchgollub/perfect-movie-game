@@ -40,7 +40,7 @@ export default class Home extends Component {
 
     const json = await res.json();
     const movie = new Movie(json.name, json.score, json.poster);
-    
+
     if (json.error || !json.score) {
       movie.score = 'Score Not Found';
     }
@@ -58,9 +58,13 @@ export default class Home extends Component {
   }
 
   calculateScore() {
-    return Number(this.state.movie1.score.replace(/\D/g, ''))
-      + Number(this.state.movie2.score.replace(/\D/g, ''))
-      + '%';
+    if (this.state.movie1.score !== '__' && this.state.movie2.score !== '__') {
+      return Number(this.state.movie1.score.replace(/\D/g, ''))
+        + Number(this.state.movie2.score.replace(/\D/g, ''))
+        + '%';
+    }
+    
+    return '?';
   }
 
   render() {
@@ -98,7 +102,7 @@ export default class Home extends Component {
           </div>
 
           <div className="row">
-            <h1>{this.state.movie1.score} + {this.state.movie2.score} = {this.state.movie2.score !== '__' ? this.calculateScore() : '?'}</h1>
+            <h1>{this.state.movie1.score} + {this.state.movie2.score} = {this.calculateScore()}</h1>
           </div>
         </div>
 
