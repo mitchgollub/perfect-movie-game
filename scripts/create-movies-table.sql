@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS movie_game.movies;
 CREATE TABLE IF NOT EXISTS movie_game.movies (
     request_id INT AUTO_INCREMENT,
     request VARCHAR(200) NOT NULL,
+    title VARCHAR(200) NOT NULL,
     score INT NULL,
     poster VARCHAR(200) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

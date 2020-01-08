@@ -16,30 +16,21 @@ export default class Home extends Component {
     this.handleMovieEntry = this.handleMovieEntry.bind(this);
   }
 
-  movie1OnChange(event) { this.state.movie1.name = event.target.value; this.setState({ movie1: this.state.movie1 }) }
-  movie2OnChange(event) { this.state.movie2.name = event.target.value; this.setState({ movie2: this.state.movie2 }) }
+  movie1OnChange(event) { this.state.movie1.title = event.target.value; this.setState({ movie1: this.state.movie1 }) }
+  movie2OnChange(event) { this.state.movie2.title = event.target.value; this.setState({ movie2: this.state.movie2 }) }
 
   async handleMovieEntry(event) {
     const id = event.target.id;
 
-    let movieName = this.state.movie2.name;
+    let movieTitle = this.state.movie2.title;
 
     if ((id === 'movie1Submit'))
-      movieName = this.state.movie1.name;
+      movieTitle = this.state.movie1.title;
 
-    const res = await fetch(`/api/getScore`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        movieName: movieName
-      })
-    });
+    const res = await fetch(`/api/score/${movieTitle}`);
 
     const json = await res.json();
-    const movie = new Movie(json.name, json.score, json.poster);
+    const movie = new Movie(json.title, json.score, json.poster);
 
     if (json.error || !json.score) {
       movie.score = 'Score Not Found';
@@ -86,7 +77,7 @@ export default class Home extends Component {
             <h2>Movie 1: </h2>
             <div className="movie">
               <div className="movie-input">
-                <input className="movie-input__child" type="text" name="movie1" onChange={this.movie1OnChange} value={this.state.movie1.name} />
+                <input className="movie-input__child" type="text" name="movie1" onChange={this.movie1OnChange} value={this.state.movie1.title} />
                 <button className="movie-input__child" id="movie1Submit" onClick={this.handleMovieEntry}>Submit</button>
               </div>
               <img src={this.state.movie1.poster}></img>
@@ -94,7 +85,7 @@ export default class Home extends Component {
             <h2>Movie 2: </h2>
             <div className="movie">
               <div className="movie-input">
-                <input className="movie-input__child" type="text" name="movie2" onChange={this.movie2OnChange} value={this.state.movie2.name} />
+                <input className="movie-input__child" type="text" name="movie2" onChange={this.movie2OnChange} value={this.state.movie2.title} />
                 <button className="movie-input__child" id="movie2Submit" onClick={this.handleMovieEntry}>Submit</button>
               </div>
               <img src={this.state.movie2.poster}></img>
