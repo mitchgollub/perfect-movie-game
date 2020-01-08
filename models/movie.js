@@ -1,6 +1,6 @@
 export class Movie {
-    constructor(name, score, poster) {
-        this.name = name || '';
+    constructor(title, score, poster) {
+        this.title = title || '';
         this.score = score || '__';
         this.poster = poster || '';
     }
