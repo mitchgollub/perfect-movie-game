@@ -77,16 +77,16 @@ export default class Home extends Component {
             <h2>Movie 1: </h2>
             <div className="movie">
               <div className="movie-input">
-                <input className="movie-input__child" type="text" name="movie1" onChange={this.movie1OnChange} value={this.state.movie1.title} />
-                <button className="movie-input__child" id="movie1Submit" onClick={this.handleMovieEntry}>Submit</button>
+                <input className="movie-input__child input-text" type="text" name="movie1" onChange={this.movie1OnChange} value={this.state.movie1.title} />
+                <button className="movie-input__child button" id="movie1Submit" onClick={this.handleMovieEntry}>Submit</button>
               </div>
               <img src={this.state.movie1.poster}></img>
             </div>
             <h2>Movie 2: </h2>
             <div className="movie">
               <div className="movie-input">
-                <input className="movie-input__child" type="text" name="movie2" onChange={this.movie2OnChange} value={this.state.movie2.title} />
-                <button className="movie-input__child" id="movie2Submit" onClick={this.handleMovieEntry}>Submit</button>
+                <input className="movie-input__child input-text" type="text" name="movie2" onChange={this.movie2OnChange} value={this.state.movie2.title} />
+                <button className="movie-input__child button" id="movie2Submit" onClick={this.handleMovieEntry}>Submit</button>
               </div>
               <img src={this.state.movie2.poster}></img>
             </div>
@@ -98,6 +98,10 @@ export default class Home extends Component {
         </div>
 
         <style jsx>{`
+      .body {
+        background: rgb(255,255,255);
+        background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(42,190,189,1) 100%);
+      }
       .hero {
         width: 100%;
         color: #333;
@@ -139,6 +143,17 @@ export default class Home extends Component {
       .movie-input__child {
         flex: 0 0 0;
         margin: 1em;
+      }
+      .input-text {
+        padding: 1em;
+      }
+      .button {
+        background-color: #398AD7;
+        border: none;
+        border-radius: 5px;
+        -webkit-appearance: none;
+        padding: 1.5em;
+        font-size: 1em;
       }
     `}</style>
       </div>
