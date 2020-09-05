@@ -1,6 +1,6 @@
 import axios from 'axios';
 import SQL from 'sql-template-strings';
-import db from '../../../lib/db';
+// import db from '../../../lib/db';
 import { Movie } from '../../../models/movie';
 
 export default async (req, res) => {
@@ -13,18 +13,18 @@ export default async (req, res) => {
 
         let movie = new Movie(movieTitle);
 
-        // Check DB cache to reduce # of API calls
-        const dbResp = await db.query(SQL`SELECT score, poster, title FROM movies WHERE request = ${movieTitle}`);
-        console.log(dbResp);
-        if (dbResp[0]) {
-            movie = new Movie(
-                dbResp[0].title,
-                dbResp[0].score,
-                dbResp[0].poster
-            );
+        // // Check DB cache to reduce # of API calls
+        // const dbResp = await db.query(SQL`SELECT score, poster, title FROM movies WHERE request = ${movieTitle}`);
+        // console.log(dbResp);
+        // if (dbResp[0]) {
+        //     movie = new Movie(
+        //         dbResp[0].title,
+        //         dbResp[0].score,
+        //         dbResp[0].poster
+        //     );
 
-            return res.status(200).json(movie);
-        }
+        //     return res.status(200).json(movie);
+        // }
 
         // Call omdb api w/ movie title
         const response = await axios.get(`https://www.omdbapi.com/?t=${encodeURI(movieTitle)}&apikey=${process.env.OMDB_API_KEY}`);
@@ -43,9 +43,9 @@ export default async (req, res) => {
             response.data.Poster
         );
 
-        // Insert value into DB
-        const dbUpdate = await db.query(SQL`INSERT INTO movies (request, score, poster, title) VALUES (${movieTitle}, ${movie.score}, ${movie.poster}, ${movie.title})`);
-        console.log(dbUpdate);
+        // // Insert value into DB
+        // const dbUpdate = await db.query(SQL`INSERT INTO movies (request, score, poster, title) VALUES (${movieTitle}, ${movie.score}, ${movie.poster}, ${movie.title})`);
+        // console.log(dbUpdate);
 
         return res.status(200).json(movie);
     }
