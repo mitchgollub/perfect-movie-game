@@ -1,9 +1,7 @@
 {
   "env": {
     "OMDB_API_KEY": "@omdb_api_key",
-    "MYSQL_HOST": "@mysql_host",
-    "MYSQL_USER": "@mysql_user",
-    "MYSQL_PASSWORD": "@mysql_password",
-    "MYSQL_MOVIE_DATABASE": "@mysql_movie_database"
+    "MONGODB_HOST": "@movie_mongodb_host",
+    "MONGODB_DB": "@movie_mongodb_db"
   }
 }
