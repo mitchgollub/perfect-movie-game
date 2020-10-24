@@ -1,51 +1,43 @@
 import axios from 'axios';
-import SQL from 'sql-template-strings';
-// import db from '../../../lib/db';
 import { Movie } from '../../../models/movie';
+import mongodb from '../../../lib/mongodb';
 
 export default async (req, res) => {
     try {
-        const movieTitle = req.query.id;
-        console.log(movieTitle);
+        const title = req.query.id;
+        console.log(title);
 
-        if (!movieTitle)
+        if (!title)
             return res.status(400).json({ error: "'movie' parameter required" });
 
-        let movie = new Movie(movieTitle);
-
         // // Check DB cache to reduce # of API calls
-        // const dbResp = await db.query(SQL`SELECT score, poster, title FROM movies WHERE request = ${movieTitle}`);
-        // console.log(dbResp);
-        // if (dbResp[0]) {
-        //     movie = new Movie(
-        //         dbResp[0].title,
-        //         dbResp[0].score,
-        //         dbResp[0].poster
-        //     );
+        const foundMovie = await mongodb.findMovieDocument(title);
 
-        //     return res.status(200).json(movie);
-        // }
+        if (foundMovie) {
+            console.log(`Movie found in database: ${foundMovie.title}`);
+            return res.status(200).json(foundMovie);
+        }
 
         // Call omdb api w/ movie title
-        const response = await axios.get(`https://www.omdbapi.com/?t=${encodeURI(movieTitle)}&apikey=${process.env.OMDB_API_KEY}`);
+        const response = await axios.get(`https://www.omdbapi.com/?t=${encodeURI(title)}&apikey=${process.env.OMDB_API_KEY}`);
         console.log(response.data);
 
         // Can't find movie
         if (response.data.Error) {
             console.warn(response.data.Error);
-            return res.status(404).json({ error: `Could not find Movie '${movieTitle}'` });
+            return res.status(404).json({ error: `Could not find Movie '${title}'` });
         }
 
         // Set return object if found
-        movie = new Movie(
-            response.data.Title,
-            getRating(response.data.Ratings),
-            response.data.Poster
-        );
+        const movie = new Movie({
+            title: response.data.Title,
+            request: title,
+            score: getRating(response.data.Ratings),
+            poster: response.data.Poster
+        });
 
-        // // Insert value into DB
-        // const dbUpdate = await db.query(SQL`INSERT INTO movies (request, score, poster, title) VALUES (${movieTitle}, ${movie.score}, ${movie.poster}, ${movie.title})`);
-        // console.log(dbUpdate);
+        // Insert value into DB
+        mongodb.insertMovieDocument(movie);
 
         return res.status(200).json(movie);
     }

@@ -30,7 +30,11 @@ export default class Home extends Component {
     const res = await fetch(`/api/score/${movieTitle}`);
 
     const json = await res.json();
-    const movie = new Movie(json.title, json.score, json.poster);
+    const movie = new Movie({
+      title: json.title,
+      score: json.score,
+      poster: json.poster
+    });
 
     if (json.error || !json.score) {
       movie.score = 'Score Not Found';
@@ -54,7 +58,7 @@ export default class Home extends Component {
         + Number(this.state.movie2.score.replace(/\D/g, ''))
         + '%';
     }
-    
+
     return '?';
   }
 
