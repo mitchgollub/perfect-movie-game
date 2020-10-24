@@ -1,7 +1,7 @@
 {
   "env": {
     "OMDB_API_KEY": "@omdb_api_key",
-    "MONGODB_HOST": "@movie_mongodb_host",
-    "MONGODB_DB": "@movie_mongodb_db"
+    "MONGO_HOST": "@movie_mongodb_host",
+    "MONGO_DB": "@movie_mongodb_db"
   }
 }
