@@ -37,7 +37,7 @@ export default async (req, res) => {
         });
 
         // Insert value into DB
-        mongodb.insertMovieDocument(movie);
+        await mongodb.insertMovieDocument(movie);
 
         return res.status(200).json(movie);
     }
