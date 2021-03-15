@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "perf": "k6 run --vus 10 --duration 30s testing/performance/api-score.k6.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
