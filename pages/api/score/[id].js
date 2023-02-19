@@ -10,12 +10,17 @@ export default async (req, res) => {
         if (!title)
             return res.status(400).json({ error: "'movie' parameter required" });
 
-        // // Check DB cache to reduce # of API calls
-        const foundMovie = await mongodb.findMovieDocument(title);
+        // Check DB cache to reduce # of API calls
+        try {
+            const foundMovie = await mongodb.findMovieDocument(title);
 
-        if (foundMovie) {
-            console.log(`Movie found in database: ${foundMovie.title}`);
-            return res.status(200).json(foundMovie);
+            if (foundMovie) {
+                console.log(`Movie found in database: ${foundMovie.title}`);
+                return res.status(200).json(foundMovie);
+            }
+        }
+        catch (e) {
+            console.error(`Error finding movie: ${e}`);
         }
 
         // Call omdb api w/ movie title
@@ -37,7 +42,12 @@ export default async (req, res) => {
         });
 
         // Insert value into DB
-        await mongodb.insertMovieDocument(movie);
+        try {
+            await mongodb.insertMovieDocument(movie);
+        }
+        catch (e) {
+            console.error(`Error storing movie: ${e}`);
+        }
 
         return res.status(200).json(movie);
     }
