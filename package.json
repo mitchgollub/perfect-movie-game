@@ -6,14 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "perf": "k6 run --vus 10 --duration 30s testing/performance/api-score.k6.js"
+    "perf": "k6 run --vus 10 --duration 30s testing/performance/api-score.k6.js",
+    "profile": "next build && node --prof ./node_modules/.bin/next start"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "mongo-sanitize": "^1.1.0",
     "mongodb": "^3.6.2",
-    "next": "^10.0.8",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "next": "^13.1.6",
+    "react": "^18",
+    "react-dom": "^18"
   }
 }
